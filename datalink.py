@@ -28,7 +28,7 @@ if data_units == 'metric':
 data_format = 'json'
 days_behind = 0
 begin_date = (datetime.now() - timedelta(days=days_behind)).strftime('%Y%m%d')
-days_ahead = 1
+days_ahead = 0
 end_date = (datetime.today() + timedelta(days=days_ahead)).strftime('%Y%m%d')
 
 datum = 'MLLW'
@@ -87,11 +87,34 @@ for i in range(len(heights) - 1):
         asc_ht.append(heights[i])
         asc_time.append(times[i])
 
-plt.plot(times, [3.25]*len(times), color='black')
-plt.plot(times, heights)
-plt.plot(desc_time, desc_ht, color='red')
-plt.fill_between(desc_time, desc_ht, 3.25, color='pink', alpha=0.5)
-plt.fill_between(asc_time, asc_ht, 3.25, color='lightblue', alpha=0.8)
+plt.plot(times, [3.25]*len(times), color='slategray')
+plt.plot(times, heights, color='dodgerblue')
+plt.plot(desc_time, desc_ht, color='orangered')
+plt.fill_between(desc_time, desc_ht, 3.25, color='lightblue', alpha=0.5)
+plt.fill_between(asc_time, asc_ht, 3.25, color='lightblue', alpha=1)
+
+# TODO: need to determine the time in the location of the data, not the compiler.
+time_now = datetime.now()
+nearest_time = times.index(min(times, key=lambda x: abs(x - time_now)))
+height_now = heights[nearest_time]
+
+plt.axvline(x=time_now, 
+            ymin=0, ymax=1,
+            color='darkslategray', 
+            linestyle='--', 
+            label='now')
+
+# plt.text(time_now, height_now, f'Current tide\n{height_now} ({units})', fontsize=11, color='slategray')
+
+plt.plot(time_now, height_now, marker='o', color='darkslategray')
+plt.annotate(
+    f'Current tide\n{height_now} ({units})',
+    xy=(time_now, height_now),
+    xytext=(time_now + timedelta(minutes=30), height_now + 0.25),
+    fontsize=11,
+    color='darkslategray'
+)
+
 ax = plt.gca()
 ax.xaxis.set_major_locator(mdates.DayLocator())
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
