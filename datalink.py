@@ -11,7 +11,8 @@ stations: Dict = {
     'tacoma': '9446484',
     'tacoma narrows': '9446486',
     'gig harbor': '9446369',
-    'yoman point': '9446705'
+    'yoman point': '9446705',
+    'budd inlet': '9446807'
 }
 station = 'yoman point'
 
@@ -20,7 +21,7 @@ time_type = 'lst_ldt'
 data_units = 'metric'
 data_format = 'json'
 begin_date = datetime.now().strftime('%Y%m%d')
-days_ahead = 1
+days_ahead = 0
 end_date = (datetime.today() + timedelta(days=days_ahead)).strftime('%Y%m%d')
 
 datum = 'MLLW'
@@ -54,5 +55,6 @@ ax = plt.gca()
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 plt.xlabel('Time (Today)')
 plt.ylabel('Height (m)')
+plt.grid(True)
 plt.title(f'Tide Predictions for {station.title()}')
 plt.show()
