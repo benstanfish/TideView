@@ -1,7 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import urllib.request
 import json
-from typing import Dict, List, Tuple
+from typing import Dict
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import pandas as pd
@@ -18,7 +18,8 @@ time_type = 'lst_ldt'
 data_units = 'metric'
 data_format = 'json'
 begin_date = datetime.now().strftime('%Y%m%d')
-end_date = begin_date
+days_ahead = 1
+end_date = (datetime.today() + timedelta(days=days_ahead)).strftime('%Y%m%d')
 
 datum = 'MLLW'
 
@@ -33,8 +34,8 @@ def get_data(api_url: str=api_url) -> dict:
     except Exception as e:
         print(e)
 
+
 predictions = get_data(api_url)['predictions']
-# print(predictions)
 
 times = []
 heights = []
