@@ -4,6 +4,9 @@ import json
 from typing import Dict
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+from matplotlib.ticker import (MultipleLocator, AutoMinorLocator)
+import numpy as np
+from scipy.signal import find_peaks
 # import pandas as pd
 
 stations: Dict = {
@@ -19,12 +22,13 @@ station = 'tacoma'
 product = 'predictions'
 time_type = 'lst_ldt'
 data_units = 'english' # metric or english
-units = 'ft'
+units = 'english'
 if data_units == 'metric':
     units = 'm'
 data_format = 'json'
-begin_date = datetime.now().strftime('%Y%m%d')
-days_ahead = 0
+days_behind = 0
+begin_date = (datetime.now() - timedelta(days=days_behind)).strftime('%Y%m%d')
+days_ahead = 1
 end_date = (datetime.today() + timedelta(days=days_ahead)).strftime('%Y%m%d')
 
 datum = 'MLLW'
@@ -53,10 +57,47 @@ for dictionary in predictions:
         else:
             heights.append(float(value))
 
+
+
+# peaks, _ = find_peaks(np.array(heights))
+# print([heights[peak] for peak in peaks])
+
+# valleys, _ = find_peaks(-np.array(heights))
+# print([heights[valley] for valley in valleys])
+
+# for i, height in enumerate(heights):
+#     print(i, height)
+
+asc_ht = []
+asc_time = []
+desc_ht = []
+desc_time = []
+
+for i in range(len(heights) - 1):
+    change = heights[i + 1] - heights[i]
+    # print(i, change, change < 0)
+    if change < 0:
+        desc_ht.append(heights[i])
+        desc_time.append(times[i])
+        asc_ht.append(np.nan)
+        asc_time.append(times[i])
+    else:
+        desc_ht.append(np.nan)
+        desc_time.append(times[i])
+        asc_ht.append(heights[i])
+        asc_time.append(times[i])
+
+plt.plot(times, [3.25]*len(times), color='black')
 plt.plot(times, heights)
+plt.plot(desc_time, desc_ht, color='red')
+plt.fill_between(desc_time, desc_ht, 3.25, color='pink', alpha=0.5)
+plt.fill_between(asc_time, asc_ht, 3.25, color='lightblue', alpha=0.8)
 ax = plt.gca()
-ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-plt.xlabel('Time (from Today)')
+ax.xaxis.set_major_locator(mdates.DayLocator())
+ax.xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+ax.xaxis.set_minor_locator(mdates.HourLocator(np.arange(0,24,6)))
+ax.xaxis.set_minor_formatter(mdates.DateFormatter('%H'))
+plt.xlabel('Date and Time')
 plt.ylabel(f'Height ({units})')
 plt.grid(True)
 plt.title(f'Tide Predictions for {station.title()}')
