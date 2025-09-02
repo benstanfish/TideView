@@ -22,7 +22,7 @@ station = 'tacoma'
 product = 'predictions'
 time_type = 'lst_ldt'
 data_units = 'english' # metric or english
-units = 'english'
+units = 'ft'
 if data_units == 'metric':
     units = 'm'
 data_format = 'json'
