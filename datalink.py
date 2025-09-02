@@ -14,11 +14,14 @@ stations: Dict = {
     'yoman point': '9446705',
     'budd inlet': '9446807'
 }
-station = 'yoman point'
+station = 'tacoma'
 
 product = 'predictions'
 time_type = 'lst_ldt'
-data_units = 'metric'
+data_units = 'english' # metric or english
+units = 'ft'
+if data_units == 'metric':
+    units = 'm'
 data_format = 'json'
 begin_date = datetime.now().strftime('%Y%m%d')
 days_ahead = 0
@@ -53,8 +56,8 @@ for dictionary in predictions:
 plt.plot(times, heights)
 ax = plt.gca()
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
-plt.xlabel('Time (Today)')
-plt.ylabel('Height (m)')
+plt.xlabel('Time (from Today)')
+plt.ylabel(f'Height ({units})')
 plt.grid(True)
 plt.title(f'Tide Predictions for {station.title()}')
 plt.show()
